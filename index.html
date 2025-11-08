@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusRepublic - University Student Community</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%235b21b6'/><text x='50%25' y='55%25' text-anchor='middle' font-family='Inter,Arial' font-size='34' fill='white'>CR</text></svg>">
+  <link rel="stylesheet" href="dist/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Site owner Supabase Auth user ID (granted admin on all newly created communities)
+    window.SITE_OWNER_ID = 'a9082745-e70d-46ea-8992-7231a729290f';
+  </script>
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .vote-button:hover {
+            transform: scale(1.1);
+        }
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .category-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        html { text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+        .backdrop-blur-sm { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+        .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="min-h-full bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50"><!-- Header -->
+  <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-purple-200 sticky top-0 z-50">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+     <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2">
+       <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg"><span class="text-white font-bold text-sm">CR</span>
+       </div>
+       <h1 id="site-title" class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">CampusRepublic</h1>
+      </div>
+      <div class="hidden md:flex items-center space-x-6"><button class="text-gray-600 hover:text-blue-600 font-medium">Home</button> <button class="text-gray-600 hover:text-blue-600 font-medium">Popular</button> <button class="text-gray-600 hover:text-blue-600 font-medium">Communities</button>
+      </div>
+     </div>
+  <!-- Feedback Modal -->
+  <div id="feedback-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+   <div class="bg-white rounded-lg max-w-md w-full" aria-label="Feedback Modal" role="dialog">
+    <div class="p-6">
+     <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold text-gray-900">Share Feedback</h2>
+      <button id="close-feedback-modal" aria-label="Close" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+     </div>
+     <div class="space-y-3">
+      <input id="feedback-title" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Feature or issue title">
+      <textarea id="feedback-body" name="body" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Describe what you want or what's not working"></textarea>
+      <div class="flex justify-end">
+       <button id="submit-feedback" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Submit</button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- Moderation Dashboard -->
+  <div id="mod-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+   <div class="bg-white rounded-lg max-w-2xl w-full max-h-[85%] overflow-y-auto" aria-label="Moderation Dashboard" role="dialog">
+    <div class="p-6">
+     <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-gray-900">Moderation Queue</h2>
+      <button id="close-mod-modal" aria-label="Close" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+     </div>
+     <div id="mod-list" class="space-y-3"></div>
+    </div>
+   </div>
+  </div>
+     <div class="flex items-center space-x-4">
+      <div class="hidden md:block"><input type="text" placeholder="Search posts..." aria-label="Search posts" name="q" class="w-64 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+      </div>
+      <div class="relative">
+       <button id="notif-bell" aria-label="Notifications" class="relative p-2 rounded-full hover:bg-purple-50">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">0</span>
+       </button>
+       <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-white/90 backdrop-blur-md border border-white/30 rounded-xl shadow-xl p-2 z-50">
+        <div class="flex items-center justify-between px-2 py-1">
+         <span class="text-sm font-semibold text-gray-800">Notifications</span>
+         <button id="notif-clear" class="text-xs text-blue-600 hover:underline">Clear all</button>
+        </div>
+        <div id="notif-list" class="max-h-80 overflow-auto divide-y divide-gray-100"></div>
+       </div>
+      </div>
+      <button id="open-feedback" class="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">Feedback</button>
+      <button id="open-mod" title="Moderation" aria-label="Open moderation" class="hidden md:inline-flex p-2 rounded-full hover:bg-red-50">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </button>
+      <button id="login-btn" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"> Sign In </button>
+     </div>
+    </div>
+   </div>
+  </header><!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+   <div class="grid grid-cols-1 lg:grid-cols-4 gap-6"><!-- Sidebar -->
+    <aside class="lg:col-span-1">
+     <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 mb-6">
+      <h3 class="font-semibold text-gray-900 mb-4">Welcome!</h3>
+      <p id="welcome-message" class="text-sm text-gray-600 mb-4">Welcome to your university community!</p><button id="create-post-btn" class="w-full bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white py-3 px-4 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"> Create Post </button>
+     </div>
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+      <h3 class="font-semibold text-gray-900 mb-4">Popular Categories</h3>
+      <div class="space-y-2"><button class="category-filter w-full text-left px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 text-sm transition-all duration-200 hover:shadow-md" data-category="all"> 📚 All Posts </button> <button class="category-filter w-full text-left px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-yellow-100 hover:to-orange-100 text-sm transition-all duration-200 hover:shadow-md" data-category="funny"> 😂 Funny Stories </button> <button class="category-filter w-full text-left px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-blue-100 hover:to-cyan-100 text-sm transition-all duration-200 hover:shadow-md" data-category="academic"> 🎓 Academic Help </button> <button class="category-filter w-full text-left px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-purple-100 hover:to-indigo-100 text-sm transition-all duration-200 hover:shadow-md" data-category="blog"> ✍ Student Blogs </button> <button class="category-filter w-full text-left px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-green-100 hover:to-emerald-100 text-sm transition-all duration-200 hover:shadow-md" data-category="campus"> 🏫 Campus Life </button>
+      </div>
+     </div>
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 mt-6">
+     <div class="flex items-center justify-between mb-3">
+      <h3 class="font-semibold text-gray-900">Communities</h3>
+      <button id="create-community-btn" class="text-sm text-blue-600 hover:underline">Create</button>
+     </div>
+     <div id="communities-list" class="space-y-2"></div>
+    </div>
+    </aside><!-- Posts Feed -->
+    <div class="lg:col-span-3">
+     <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+       <h2 class="text-lg font-semibold text-gray-900">Latest Posts</h2><select id="sort-select" name="sort" aria-label="Sort posts" class="border border-gray-300 rounded-md px-3 py-1 text-sm"> <option value="new">New</option> <option value="hot">Hot</option> <option value="top">Top</option> </select>
+      </div>
+     </div><!-- Posts Container -->
+     <div id="posts-container" class="space-y-4"><!-- Posts will be dynamically loaded here -->
+     </div><!-- Loading State -->
+     <div id="loading-state" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <p class="mt-2 text-gray-600">Loading posts...</p>
+     </div><!-- Empty State -->
+     <div id="empty-state" class="text-center py-12 hidden">
+      <div class="text-6xl mb-4">
+       📝
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No posts yet</h3>
+      <p class="text-gray-600 mb-4">Be the first to share something with your university community!</p><button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors"> Create First Post </button>
+     </div>
+    </div>
+   </div>
+  </main><!-- Create Post Modal -->
+  <div id="create-post-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+   <div class="bg-white/90 backdrop-blur-md rounded-2xl max-w-2xl w-full max-h-[90%] overflow-y-auto shadow-2xl border border-white/20" aria-label="Create Post Modal" role="dialog">
+    <div class="p-6">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-900">Create a Post</h2><button id="close-modal" aria-label="Close" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg></button>
+     </div>
+     <form id="create-post-form" class="space-y-4">
+      <div><label for="post-title" class="block text-sm font-medium text-gray-700 mb-1">Title</label> <input type="text" id="post-title" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="What's your post about?">
+      </div>
+      <div><label for="post-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label> <select id="post-category" name="category" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">Select a category</option> <option value="funny">😂 Funny Stories</option> <option value="academic">🎓 Academic Help</option> <option value="blog">✍ Student Blogs</option> <option value="campus">🏫 Campus Life</option> </select>
+      </div>
+      <div><label for="post-university" class="block text-sm font-medium text-gray-700 mb-1">University</label> <input type="text" id="post-university" name="university" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Your university name">
+      </div>
+      <div><label for="post-author" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label> <input type="text" id="post-author" name="author" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="How should we display your name?">
+      </div>
+      <div><label for="post-content" class="block text-sm font-medium text-gray-700 mb-1">Content</label> <textarea id="post-content" name="content" required rows="8" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Share your story, blog post, or helpful information..."></textarea>
+      </div>
+      <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-post" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">Cancel</button> <button type="submit" id="submit-post" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors"> Post </button>
+      </div>
+     </form>
+    </div>
+   </div>
+  </div><!-- Login Modal -->
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+   <div class="bg-white rounded-lg max-w-md w-full" aria-label="Profile Modal" role="dialog">
+    <div class="p-6">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-900">Your Profile</h2><button id="close-profile-modal" aria-label="Close" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+     </div>
+     <form id="profile-form" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Display Name</label><input id="profile-name" name="display_name" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">University</label><input id="profile-university" name="university" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Bio</label><textarea id="profile-bio" name="bio" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea></div>
+      <div class="flex justify-between items-center pt-2">
+       <button type="button" id="logout-btn" class="text-sm text-red-600 hover:underline">Log out</button>
+       <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium">Save</button>
+      </div>
+     </form>
+    </div>
+   </div>
+  </div>
+  <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+   <div class="bg-white rounded-lg max-w-md w-full" aria-label="Login Modal" role="dialog">
+    <div class="p-6">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-900">Sign In</h2><button id="close-login-modal" aria-label="Close" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg></button>
+     </div>
+     <div class="space-y-4">
+      <div>
+       <label class="block text-sm font-medium text-gray-700 mb-1" for="auth-email">Email</label>
+       <input id="auth-email" name="email" type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="you@university.edu">
+      </div>
+      <div class="flex items-center justify-between">
+       <button id="email-magic" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Send magic link</button>
+       <button id="google-login" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">Continue with Google</button>
+      </div>
+      <div class="pt-2 border-t mt-4">
+       <div class="text-xs text-gray-500 mb-2">Or continue in demo mode</div>
+       <button id="demo-login" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-md">Continue as Demo User</button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Consolidated app script - cleaned to remove duplicate/nested scripts and syntax errors
+    const SUPABASE_URL = window.SUPABASE_URL || 'https://mqrpkspfyklixnhmvkio.supabase.co';
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xcnBrc3BmeWtsaXhuaG12a2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxNjIsImV4cCI6MjA3NzkyNDE2Mn0.lU1Q-t7EHtyUAGJIBXZObZqUj3JzLasCvyLCPPjDeq0';
+
+    let supabaseClient = null;
+    let currentUser = null;
+    let posts = [];
+    let isLoading = false;
+    const SITE_OWNER_ID = window.SITE_OWNER_ID || null; // Set this to your Supabase auth user ID in production
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg text-white font-medium transition-all duration-300 transform translate-x-full ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+      }`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      // animate in/out
+      setTimeout(() => toast.classList.remove('translate-x-full'), 50);
+      setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(()=> toast.remove(), 300); }, 3000);
+    }
+
+    async function initializeSupabase() {
+      if (!window.supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        console.warn('Supabase not configured or supabase-js not loaded');
+        return;
+      }
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // Auth changes
+      supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        const user = session?.user ?? null;
+        if (user) await onUserSignedIn(user);
+        else onUserSignedOut();
+      });
+
+      // Try to load existing session
+      try {
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        if (sessionData?.session?.user) await onUserSignedIn(sessionData.session.user);
+      } catch (e) {
+        console.warn('getSession failed', e);
+      }
+
+      // Load posts initially
+      await loadPosts();
+      subscribeToRealtimePosts();
+    }
+
+    async function onUserSignedIn(user) {
+      currentUser = {
+        id: user.id,
+        email: user.email || '',
+        name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+      };
+      const lb = document.getElementById('login-btn');
+      if (lb) lb.textContent = currentUser.name;
+      await syncProfileToSupabase();
+    }
+
+    function onUserSignedOut() {
+      currentUser = null;
+      const lb = document.getElementById('login-btn');
+      if (lb) lb.textContent = 'Sign In';
+    }
+
+    function setupAuthButtons() {
+      document.getElementById('email-magic')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (!supabaseClient) return showToast('Backend not configured', 'error');
+        const email = (document.getElementById('auth-email')?.value || '').trim();
+        if (!email) return showToast('Enter your email', 'error');
+        const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } });
+        if (error) showToast('Failed to send magic link: ' + error.message, 'error');
+        else showToast('Magic link sent — check your email');
+      });
+
+      document.getElementById('google-login')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (!supabaseClient) return showToast('Backend not configured', 'error');
+        const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } });
+        if (error) showToast('Google sign-in failed: ' + error.message, 'error');
+      });
+
+      document.getElementById('demo-login')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentUser = { id: 'demo_' + Math.random().toString(36).slice(2), name: 'Demo User', email: 'demo@local' };
+        document.getElementById('login-btn').textContent = currentUser.name;
+        showToast('Signed in as Demo User');
+      });
+
+      document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (supabaseClient) await supabaseClient.auth.signOut();
+        onUserSignedOut();
+        showToast('Logged out');
+      });
+    }
+
+    async function syncProfileToSupabase() {
+      if (!supabaseClient || !currentUser) return;
+      try {
+        const profile = {
+          id: currentUser.id,
+          full_name: currentUser.name,
+          email: currentUser.email,
+          university: document.getElementById('profile-university')?.value || null,
+          bio: document.getElementById('profile-bio')?.value || null,
+          updated_at: new Date().toISOString()
+        };
+        const { error } = await supabaseClient.from('profiles').upsert(profile, { returning: 'minimal' });
+        if (error) console.warn('profile upsert failed', error);
+      } catch (err) {
+        console.error('profile sync error', err);
+      }
+    }
+
+    async function loadPosts() {
+      if (!supabaseClient) return;
+      try {
+        isLoading = true;
+        updateLoadingState();
+        const { data, error } = await supabaseClient
+          .from('posts')
+          .select('id, data, created_at')
+          .order('created_at', { ascending: false })
+          .limit(1000);
+        if (error) { console.error('load posts error', error); return; }
+        posts = (data || []).map(r => ({ ...(r.data || {}), id: r.id, created_at: r.created_at }));
+        renderPosts();
+        updateCategoryCounts();
+      } catch (err) {
+        console.error('loadPosts error', err);
+      } finally {
+        isLoading = false;
+        updateLoadingState();
+      }
+    }
+
+    function subscribeToRealtimePosts() {
+      if (!supabaseClient) return;
+      try {
+        supabaseClient.channel('public:posts')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, async () => {
+            await loadPosts();
+          })
+          .subscribe();
+      } catch (err) {
+        console.warn('realtime subscribe failed', err);
+      }
+    }
+
+    async function createPost(post) {
+      if (supabaseClient) {
+        try {
+          const row = { id: post.id, data: post, created_at: new Date().toISOString() };
+          // Only attach user_id if it is a valid Supabase auth UUID
+          const uid = currentUser?.id || post.userId;
+          if (isUUID(uid)) row.user_id = uid;
+          const { error } = await supabaseClient.from('posts').insert(row);
+          return { isOk: !error, error: error?.message };
+        } catch (err) {
+          console.error('createPost error', err);
+          return { isOk: false, error: err.message };
+        }
+      }
+      return { isOk: false, error: 'no backend' };
+    }
+
+    function setupCreatePostForm() {
+      const form = document.getElementById('create-post-form');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentUser) return showToast('Please sign in before posting', 'error');
+
+        const title = (document.getElementById('post-title')?.value || '').trim();
+        const category = (document.getElementById('post-category')?.value || '').trim();
+        const university = (document.getElementById('post-university')?.value || '').trim();
+        const author = currentUser.name;
+        const content = (document.getElementById('post-content')?.value || '').trim();
+
+        if (!title || !category || !content) return showToast('Title, category, and content are required', 'error');
+
+        const post = {
+          id: generateId(),
+          title,
+          category,
+          university,
+          author,
+          userId: currentUser.id,
+          community: (currentCommunity && currentCommunity !== 'all') ? currentCommunity : 'general',
+          content,
+          upvotes: 0,
+          downvotes: 0,
+          comments: 0,
+          commentsList: [],
+          timestamp: new Date().toISOString()
+        };
+
+        const res = await createPost(post);
+        if (res.isOk) {
+          posts.unshift(post);
+          renderPosts();
+          showToast('Post published');
+          document.getElementById('create-post-modal')?.classList.add('hidden');
+          form.reset();
+        } else {
+          console.error('create post failed', res.error);
+          showToast('Failed to publish post: ' + (res.error || 'unknown'), 'error');
+        }
+      });
+    }
+
+    function setupFeedbackSubmit() {
+      const btn = document.getElementById('submit-feedback');
+      if (!btn) return;
+      btn.addEventListener('click', async () => {
+        const title = (document.getElementById('feedback-title')?.value || '').trim();
+        const body = (document.getElementById('feedback-body')?.value || '').trim();
+        if (!title || !body) return showToast('Please provide title and description', 'error');
+        if (!supabaseClient) return showToast('Backend not configured', 'error');
+
+        try {
+          const { error } = await supabaseClient.from('feedback').insert({
+            id: generateId(),
+            title,
+            body,
+            user_id: currentUser?.id || null,
+            created_at: new Date().toISOString()
+          });
+          if (error) { console.error(error); showToast('Failed to send feedback', 'error'); return; }
+          showToast('Thanks — feedback sent');
+          document.getElementById('feedback-modal')?.classList.add('hidden');
+          document.getElementById('feedback-title').value = '';
+          document.getElementById('feedback-body').value = '';
+        } catch (err) {
+          console.error('feedback submit error', err);
+          showToast('Failed to send feedback', 'error');
+        }
+      });
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    function isUUID(v) {
+      return typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
+    }
+
+    function timeAgo(timestamp) {
+      const now = new Date();
+      const posted = new Date(timestamp);
+      const diffInMinutes = Math.floor((now - posted) / (1000 * 60));
+      if (diffInMinutes < 1) return 'just now';
+      if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+      if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+      return `${Math.floor(diffInMinutes / 1440)}d ago`;
+    }
+
+    function getCategoryIcon(category) {
+      const icons = { funny: '😂', academic: '🎓', blog: '✍', campus: '🏫' };
+      return icons[category] || '📝';
+    }
+
+    function getCategoryColor(category) {
+      const colors = { funny: 'bg-yellow-100 text-yellow-800', academic: 'bg-blue-100 text-blue-800', blog: 'bg-purple-100 text-purple-800', campus: 'bg-green-100 text-green-800' };
+      return colors[category] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Simple communities renderer (keeps existing API)
+    let communities = [];
+    let currentCommunity = 'all';
+    function renderCommunities() {
+      const list = document.getElementById('communities-list');
+      if (!list) return;
+      if (!Array.isArray(communities) || communities.length === 0) {
+        list.innerHTML = '<div class="text-sm text-gray-500">No communities yet. Create one!</div>';
+        return;
+      }
+      list.innerHTML = ['all', ...communities].map(name => `
+        <button class="community-filter w-full text-left px-3 py-2 rounded-xl hover:bg-purple-50 text-sm ${currentCommunity===name? 'bg-blue-100 text-blue-800' : ''}" data-community="${name}">
+          ${name === 'all' ? '🌐 All Communities' : `# ${name}`}
+        </button>
+      `).join('');
+      list.querySelectorAll('.community-filter').forEach(btn => {
+        btn.addEventListener('click', () => { currentCommunity = btn.dataset.community; renderPosts(); renderCommunities(); updateCategoryCounts(); });
+      });
+    }
+
+    // Communities: load from DB and create new
+    async function loadCommunities() {
+      if (!supabaseClient) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('communities')
+          .select('name')
+          .order('name', { ascending: true });
+        if (error) { console.error('loadCommunities error', error); return; }
+        communities = (data || []).map(r => r.name);
+        renderCommunities();
+      } catch (err) {
+        console.error('loadCommunities failed', err);
+      }
+    }
+
+    async function ensureCommunityAdmins(name, creatorId) {
+      if (!supabaseClient) return;
+      try {
+        const rows = [];
+        if (isUUID(creatorId)) rows.push({ community: name, user_id: creatorId, role: 'admin' });
+        if (SITE_OWNER_ID && isUUID(SITE_OWNER_ID) && SITE_OWNER_ID !== creatorId) rows.push({ community: name, user_id: SITE_OWNER_ID, role: 'admin' });
+        await supabaseClient.from('community_roles').upsert(rows, { onConflict: 'community,user_id' });
+      } catch (e) {
+        console.warn('ensureCommunityAdmins skipped/failed', e?.message || e);
+      }
+    }
+
+    function setupCreateCommunity() {
+      const btn = document.getElementById('create-community-btn');
+      if (!btn) return;
+      btn.addEventListener('click', async () => {
+        if (!currentUser) { showToast('Please sign in to create a community', 'error'); return; }
+        const name = prompt('Community name (letters, numbers, dashes):');
+        if (!name) return;
+        const clean = name.trim();
+        if (!/^[a-zA-Z0-9\- _]{3,30}$/.test(clean)) { showToast('Invalid name', 'error'); return; }
+        try {
+          if (!supabaseClient) return;
+          const payload = { name: clean };
+          if (isUUID(currentUser.id)) payload.created_by = currentUser.id;
+          const { error } = await supabaseClient.from('communities').insert(payload);
+          if (error) { console.error('createCommunity error', error); showToast('Failed to create community', 'error'); return; }
+          if (!communities.includes(clean)) communities.push(clean);
+          renderCommunities();
+          ensureCommunityAdmins(clean, currentUser.id);
+          showToast('Community created');
+        } catch (err) {
+          console.error('createCommunity failed', err);
+          showToast('Failed to create community', 'error');
+        }
+      });
+    }
+
+    // UI handlers for opening/closing modals and category filters
+    function setupUIHandlers() {
+      // Open create post modal from sidebar button
+      document.getElementById('create-post-btn')?.addEventListener('click', () => {
+        document.getElementById('create-post-modal')?.classList.remove('hidden');
+      });
+
+      // Open create post from empty state button
+      document.querySelector('#empty-state button')?.addEventListener('click', () => {
+        document.getElementById('create-post-modal')?.classList.remove('hidden');
+      });
+
+      // Cancel create post
+      document.getElementById('cancel-post')?.addEventListener('click', () => {
+        document.getElementById('create-post-modal')?.classList.add('hidden');
+      });
+    }
+
+    function setupCategoryFilters() {
+      // Ensure one active by default
+      const allBtn = document.querySelector('.category-filter[data-category="all"]');
+      if (allBtn && !document.querySelector('.category-filter.active')) {
+        allBtn.classList.add('active');
+      }
+      document.querySelectorAll('.category-filter').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderPosts();
+          updateCategoryCounts();
+        });
+      });
+    }
+
+    function categoryDisplay(category) {
+      const map = {
+        all: { emoji: '📚', label: 'All Posts' },
+        funny: { emoji: '😂', label: 'Funny Stories' },
+        academic: { emoji: '🎓', label: 'Academic Help' },
+        blog: { emoji: '✍', label: 'Student Blogs' },
+        campus: { emoji: '🏫', label: 'Campus Life' }
+      };
+      return map[category] || { emoji: '📝', label: category };
+    }
+
+    function updateCategoryCounts() {
+      const btns = document.querySelectorAll('.category-filter');
+      if (!btns || btns.length === 0) return;
+      const community = currentCommunity && currentCommunity !== 'all' ? currentCommunity : null;
+      const counts = posts.reduce((acc, p) => {
+        if (community && (p.community || 'general') !== community) return acc;
+        const key = p.category || 'other';
+        acc[key] = (acc[key] || 0) + 1;
+        acc.all = (acc.all || 0) + 1;
+        return acc;
+      }, { all: 0 });
+      btns.forEach(btn => {
+        const cat = btn.dataset.category;
+        const { emoji, label } = categoryDisplay(cat);
+        const count = counts[cat] || (cat === 'all' ? counts.all : 0);
+        btn.textContent = ` ${emoji} ${label}${typeof count === 'number' ? ` (${count})` : ''} `;
+      });
+    }
+
+    // Posts rendering
+    let postsVisibleCount = 10;
+    function renderPosts() {
+      const container = document.getElementById('posts-container');
+      if (!container) return;
+      const currentFilter = document.querySelector('.category-filter.active')?.dataset.category || 'all';
+      let filtered = currentFilter === 'all' ? posts : posts.filter(p => p.category === currentFilter);
+      if (currentCommunity && currentCommunity !== 'all') filtered = filtered.filter(p => (p.community || 'general') === currentCommunity);
+
+      if (filtered.length === 0) { container.innerHTML = ''; return; }
+      const slice = filtered.slice(0, postsVisibleCount);
+      container.innerHTML = slice.map(post => `
+        <article class="post-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]">
+          <div class="p-6">
+            <div class="flex items-start space-x-4">
+              <div class="flex flex-col items-center space-y-1 flex-shrink-0">
+                <button class="vote-button p-2 rounded-full" onclick="vote('${post.id}','up')">▲</button>
+                <span class="text-sm font-medium text-gray-700">${(post.upvotes||0) - (post.downvotes||0)}</span>
+                <button class="vote-button p-2 rounded-full" onclick="vote('${post.id}','down')">▼</button>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="category-badge px-3 py-1 rounded-full ${getCategoryColor(post.category)}">${getCategoryIcon(post.category)} ${post.category || ''}</span>
+                </div>
+                <h2 class="text-lg font-semibold text-gray-900 mb-2">${post.title || ''}</h2>
+                <p class="text-gray-700 mb-4 line-clamp-3">${(post.content || '').slice(0, 300)}</p>
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                  <div>${post.author || 'Anonymous'} · ${post.university || ''}</div>
+                  <div>${timeAgo(post.timestamp || post.created_at)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      // sentinel for infinite scroll
+      let sentinel = document.getElementById('posts-sentinel');
+      if (!sentinel) { sentinel = document.createElement('div'); sentinel.id = 'posts-sentinel'; sentinel.className = 'h-10'; container.appendChild(sentinel); }
+      else container.appendChild(sentinel);
+
+      // setup intersection observer
+      const observer = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          if (postsVisibleCount < filtered.length) { postsVisibleCount += 10; renderPosts(); }
+        }
+      });
+      observer.observe(sentinel);
+
+      // Attach comment box to each post (minimal demo)
+      posts.forEach(post => {
+        let commentSection = document.getElementById(`comments-list-${post.id}`);
+        if (!commentSection) {
+          const article = container.querySelector(`article.post-card`);
+          if (article) {
+            const div = document.createElement('div');
+            div.id = `comments-list-${post.id}`;
+            div.className = 'mt-2';
+            article.appendChild(div);
+            // Add comment input
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Add a comment...';
+            input.className = 'w-full border rounded px-2 py-1 mt-1';
+            div.appendChild(input);
+            const btn = document.createElement('button');
+            btn.textContent = 'Post';
+            btn.className = 'ml-2 px-3 py-1 bg-blue-500 text-white rounded';
+            btn.onclick = () => { if (input.value.trim()) { addComment(post.id, input.value.trim()); input.value = ''; } };
+            div.appendChild(btn);
+          }
+        }
+        renderComments(post.id);
+      });
+    }
+
+    function updateLoadingState() {
+      const loadingState = document.getElementById('loading-state');
+      const emptyState = document.getElementById('empty-state');
+      const postsContainer = document.getElementById('posts-container');
+      if (isLoading) { loadingState.classList.remove('hidden'); emptyState.classList.add('hidden'); return; }
+      loadingState.classList.add('hidden');
+      if (!posts || posts.length === 0) { emptyState.classList.remove('hidden'); postsContainer.innerHTML = ''; } else { emptyState.classList.add('hidden'); }
+    }
+
+    async function vote(postId, direction) {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      const updated = { ...post };
+      if (direction === 'up') updated.upvotes = (updated.upvotes || 0) + 1;
+      else updated.downvotes = (updated.downvotes || 0) + 1;
+      // optimistic update
+      const idx = posts.findIndex(p => p.id === postId);
+      if (idx > -1) posts[idx] = updated;
+      renderPosts();
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('posts').upsert({ id: updated.id, data: updated, user_id: currentUser?.id || updated.userId }, { onConflict: 'id' });
+        }
+      } catch (err) {
+        console.error('vote update failed', err);
+        showToast('Failed to vote', 'error');
+      }
+    }
+
+    // Minimal editing/deleting (owner-only checks)
+    function startEditPost(postId) {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      if (!currentUser || currentUser.id !== post.userId) { showToast('Not allowed', 'error'); return; }
+      const newTitle = prompt('Edit title:', post.title);
+      if (newTitle == null) return;
+      const newContent = prompt('Edit content:', post.content);
+      if (newContent == null) return;
+      const updated = { ...post, title: newTitle.trim() || post.title, content: newContent.trim() || post.content };
+      (async () => {
+        try {
+          await supabaseClient.from('posts').upsert({ id: updated.id, data: updated, user_id: currentUser?.id || updated.userId }, { onConflict: 'id' });
+          const idx = posts.findIndex(p => p.id === postId); if (idx > -1) posts[idx] = updated; renderPosts(); showToast('Post updated');
+        } catch (e) { showToast('Failed to update', 'error'); }
+      })();
+    }
+
+    async function deletePost(postId) {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      if (!currentUser || currentUser.id !== post.userId) { showToast('Not allowed', 'error'); return; }
+      if (!confirm('Delete this post?')) return;
+      const updated = { ...post, title: '[deleted]', content: '', deleted: true };
+      try {
+        await supabaseClient.from('posts').upsert({ id: updated.id, data: updated, user_id: currentUser?.id || updated.userId }, { onConflict: 'id' });
+        const idx = posts.findIndex(p => p.id === postId); if (idx > -1) posts[idx] = updated; renderPosts(); showToast('Post deleted');
+      } catch (e) { showToast('Failed to delete', 'error'); }
+    }
+
+    // Comments rendering and logic
+    function renderComments(postId) {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      const listEl = document.getElementById(`comments-list-${postId}`);
+      if (!listEl) return;
+      const comments = post.commentsList || [];
+      if (comments.length === 0) {
+        listEl.innerHTML = '<p class="text-sm text-gray-500">No comments yet. Be the first to comment.</p>';
+        return;
+      }
+      listEl.innerHTML = comments.map(c => `
+        <div class="mb-2 p-2 bg-gray-50 rounded">
+          <div class="flex items-center justify-between">
+            <span class="font-medium">${c.author || 'Anonymous'}</span>
+            <span class="text-xs text-gray-400">${timeAgo(c.timestamp)}</span>
+          </div>
+          <div class="text-gray-700">${c.content}</div>
+        </div>
+      `).join('');
+    }
+
+    function addComment(postId, content) {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      const comment = {
+        id: generateId(),
+        author: currentUser ? currentUser.name : 'Anonymous',
+        content,
+        timestamp: new Date().toISOString(),
+        likes: 0
+      };
+      post.commentsList = post.commentsList || [];
+      post.commentsList.push(comment);
+      post.comments = (post.comments || 0) + 1;
+      renderComments(postId);
+      if (supabaseClient) {
+        supabaseClient.from('posts').upsert({ id: post.id, data: post, user_id: currentUser?.id || post.userId }, { onConflict: 'id' });
+      }
+    }
+
+    // Element/data SDK integrations
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: {
+          site_title: "CampusHub",
+          welcome_message: "Welcome to your university community!",
+          create_post_text: "Create Post",
+          background_color: "#f9fafb",
+          surface_color: "#ffffff",
+          text_color: "#111827",
+          primary_action_color: "#2563eb",
+          secondary_action_color: "#ea580c"
+        },
+        onConfigChange: (config) => {
+          document.getElementById('site-title').textContent = config.site_title || "CampusHub";
+          document.getElementById('welcome-message').textContent = config.welcome_message || "Welcome to your university community!";
+          document.getElementById('create-post-btn').textContent = config.create_post_text || "Create Post";
+        },
+        mapToCapabilities: () => ({}),
+        mapToEditPanelValues: () => new Map()
+      });
+    }
+    if (window.dataSdk) {
+      window.dataSdk.init({
+        onDataChanged: (data) => {
+          posts = data;
+          renderPosts();
+          updateLoadingState();
+        }
+      });
+    }
+
+    // Bootstrapping
+    async function bootApp() {
+      await initializeSupabase();
+      setupAuthButtons();
+      setupCreatePostForm();
+      setupFeedbackSubmit();
+      setupCreateCommunity();
+      setupUIHandlers();
+      setupCategoryFilters();
+
+      // Initial data loads
+      loadCommunities();
+
+      document.getElementById('login-btn')?.addEventListener('click', () => document.getElementById('login-modal')?.classList.remove('hidden'));
+
+      document.querySelectorAll('#close-login-modal, #close-modal, #close-profile-modal, #close-feedback-modal, #close-mod-modal').forEach(btn => {
+        btn?.addEventListener('click', () => btn.closest('.fixed')?.classList.add('hidden'));
+      });
+
+      renderCommunities();
+      updateCategoryCounts();
+    }
+
+    document.addEventListener('DOMContentLoaded', bootApp);
+  </script>
+</body>
+</html>
