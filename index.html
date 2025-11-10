@@ -850,13 +850,6 @@
         }
         renderComments(post.id);
       });
-
-      // Attach view full post event
-      setTimeout(() => {
-        document.querySelectorAll('.view-full-post-btn').forEach(btn => {
-          btn.onclick = () => showFullPostModal(btn.dataset.postId);
-        });
-      }, 0);
     }
 
     function updateLoadingState() {
