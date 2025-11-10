@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Post - CampusRepublic</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="dist/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(to bottom right, #f9fafb, #ede9fe, #e0e7ff);
+      min-height: 100vh;
+    }
+    .post-container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 32px rgba(80, 0, 120, 0.12);
+      padding: 2.5rem 2rem;
+      position: relative;
+    }
+    .go-back-btn {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: #ede9fe;
+      color: #6d28d9;
+      border: none;
+      border-radius: 999px;
+      padding: 0.5rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(80,0,120,0.08);
+      transition: background 0.2s;
+    }
+    .go-back-btn:hover {
+      background: #c7d2fe;
+      color: #312e81;
+    }
+    .post-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #312e81;
+      margin-bottom: 0.5rem;
+    }
+    .post-meta {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .post-content {
+      font-size: 1.15rem;
+      color: #22223b;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+    .comments-section {
+      margin-top: 2rem;
+      background: #f3f4f6;
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+    .comment {
+      background: #fff;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 8px rgba(80,0,120,0.04);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .comment-author {
+      font-weight: 600;
+      color: #6d28d9;
+      margin-bottom: 0.2rem;
+    }
+    .comment-content {
+      color: #22223b;
+      font-size: 1rem;
+    }
+    .comment-meta {
+      color: #6b7280;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+    }
+    .add-comment-box {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .add-comment-box input {
+      flex: 1;
+      border: 1px solid #d1d5db;
+      border-radius: 0.75rem;
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+    }
+    .add-comment-box button {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.7rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .add-comment-box button:hover {
+      background: #312e81;
+    }
+  </style>
+</head>
+<body>
+  <div class="post-container">
+    <button class="go-back-btn" onclick="window.location.href='index.html'">← Back</button>
+    <div id="post-title" class="post-title">Loading...</div>
+    <div id="post-meta" class="post-meta"></div>
+    <div id="post-content" class="post-content"></div>
+    <div class="comments-section">
+      <h3 style="font-weight:600;color:#312e81;margin-bottom:1rem;">Comments</h3>
+      <div id="comments-list"></div>
+      <div class="add-comment-box">
+        <input id="comment-input" type="text" placeholder="Add a comment...">
+        <button id="comment-btn">Post</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const SUPABASE_URL = 'https://mqrpkspfyklixnhmvkio.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xcnBrc3BmeWtsaXhuaG12a2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxNjIsImV4cCI6MjA3NzkyNDE2Mn0.lU1Q-t7EHtyUAGJIBXZObZqUj3JzLasCvyLCPPjDeq0';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+    function timeAgo(ts) {
+      const now = new Date();
+      const posted = new Date(ts);
+      const diff = Math.floor((now - posted) / 60000);
+      if (diff < 1) return 'just now';
+      if (diff < 60) return `${diff}m ago`;
+      if (diff < 1440) return `${Math.floor(diff/60)}h ago`;
+      return `${Math.floor(diff/1440)}d ago`;
+    }
+    async function loadPost() {
+      const postId = getQueryParam('postId');
+      if (!postId) return;
+      const { data, error } = await supabase.from('posts').select('id, data, created_at').eq('id', postId).single();
+      if (error || !data) {
+        document.getElementById('post-title').textContent = 'Post not found.';
+        return;
+      }
+      const post = { ...(data.data || {}), id: data.id, created_at: data.created_at };
+      document.getElementById('post-title').textContent = post.title || '[No Title]';
+      document.getElementById('post-meta').textContent = `${post.author || 'Anonymous'} · ${post.university || ''} · ${timeAgo(post.timestamp || post.created_at)}`;
+      document.getElementById('post-content').textContent = post.content || '';
+      renderComments(post);
+      document.getElementById('comment-btn').onclick = async function() {
+        const val = document.getElementById('comment-input').value.trim();
+        if (!val) return;
+        post.commentsList = post.commentsList || [];
+        post.commentsList.push({
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+          author: 'Anonymous',
+          content: val,
+          timestamp: new Date().toISOString(),
+          likes: 0
+        });
+        post.comments = (post.comments || 0) + 1;
+        document.getElementById('comment-input').value = '';
+        renderComments(post);
+        await supabase.from('posts').upsert({ id: post.id, data: post }, { onConflict: 'id' });
+      };
+    }
+    function renderComments(post) {
+      const commentsDiv = document.getElementById('comments-list');
+      const comments = post.commentsList || [];
+      if (comments.length === 0) {
+        commentsDiv.innerHTML = '<p style="color:#6b7280;">No comments yet. Be the first to comment.</p>';
+        return;
+      }
+      commentsDiv.innerHTML = comments.map(c => `
+        <div class="comment">
+          <div class="comment-author">${c.author || 'Anonymous'}</div>
+          <div class="comment-content">${c.content}</div>
+          <div class="comment-meta">${timeAgo(c.timestamp)}</div>
+        </div>
+      `).join('');
+    }
+    loadPost();
+  </script>
+</body>
+</html>
