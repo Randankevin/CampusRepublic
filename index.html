@@ -328,11 +328,11 @@
     }
 
     async function initializeSupabase() {
-      if (!window.supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      if (!window.supabase || 'https://mqrpkspfyklixnhmvkio.supabase.co' ||  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xcnBrc3BmeWtsaXhuaG12a2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxNjIsImV4cCI6MjA3NzkyNDE2Mn0.lU1Q-t7EHtyUAGJIBXZObZqUj3JzLasCvyLCPPjDeq0';) {
         console.warn('Supabase not configured or supabase-js not loaded');
         return;
       }
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      supabaseClient = window.supabase.createClient(, 'https://mqrpkspfyklixnhmvkio.supabase.co' 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xcnBrc3BmeWtsaXhuaG12a2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxNjIsImV4cCI6MjA3NzkyNDE2Mn0.lU1Q-t7EHtyUAGJIBXZObZqUj3JzLasCvyLCPPjDeq0';);
 
       // Auth changes
       supabaseClient.auth.onAuthStateChange(async (event, session) => {
