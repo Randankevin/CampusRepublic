@@ -1,11 +1,10 @@
-
 <!doctype html>
 <html lang="en">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusRepublic - University Student Community</title>
- <link rel="icon" type="image/svg+xml" href="/CampusRepublic/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="dist/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.47.10/dist/umd/supabase.min.js"></script>
   <script>
@@ -289,19 +288,9 @@
   </div>
   <script>
     // Consolidated app script - cleaned to remove duplicate/nested scripts and syntax errors
-   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: {
-            // Explicitly set storage to localStorage, which may be less restricted
-            // than the default. The browser is incorrectly flagging the default
-            // storage as third-party, so we specify the less-restricted first-party storage.
-            storage: window.localStorage,
-            
-            // Forces the client to look at the URL for session info immediately
-            // This is crucial for fixing the issue after a redirect.
-            autoRefreshToken: true,
-            persistSession: true,
-        }
-    });
+    const SUPABASE_URL = window.SUPABASE_URL || 'https://mqrpkspfyklixnhmvkio.supabase.co';
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xcnBrc3BmeWtsaXhuaG12a2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxNjIsImV4cCI6MjA3NzkyNDE2Mn0.lU1Q-t7EHtyUAGJIBXZObZqUj3JzLasCvyLCPPjDeq0';
+
     let supabaseClient = null;
     let currentUser = null;
     let posts = [];
@@ -393,34 +382,13 @@
         if (error) showToast('Failed to send magic link: ' + error.message, 'error');
         else showToast('Magic link sent — check your email');
       });
-// ... inside setupAuthButtons()
-document.getElementById('google-login')?.addEventListener('click', async (e) => {
-    e.preventDefault();
-    if (!supabaseClient) return showToast('Backend not configured', 'error');
 
-    const email = (document.getElementById('auth-email')?.value || '').trim();
-    if (email) {
-        showToast('Google OAuth does not use an email input.', 'error');
-        return;
-    }
-
-    const { error, data } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: getRedirectBaseUrl(),
-            // 🚨 ADD THIS LINE: forces Supabase to use the URL hash for session data
-            skipBrowserRedirect: true,
-        }
-    });
-
-    if (error) {
-        showToast('Google login failed: ' + error.message, 'error');
-    } else if (data.url) {
-        // 🚨 ADD THIS BLOCK: manually redirects the user to the provider URL
-        window.location.href = data.url;
-    }
-});
-     
+      document.getElementById('google-login')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (!supabaseClient) return showToast('Backend not configured', 'error');
+        const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: getRedirectBaseUrl() } });
+        if (error) showToast('Google sign-in failed: ' + error.message, 'error');
+      });
 
       document.getElementById('demo-login')?.addEventListener('click', (e) => {
         e.preventDefault();
