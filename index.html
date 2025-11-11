@@ -326,13 +326,24 @@
       }
     }
 
-    async function initializeSupabase() {
+   async function initializeSupabase() {
       if (!window.supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
         console.warn('Supabase not configured or supabase-js not loaded');
         return;
       }
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+      
+      // 🚨 FIX: Explicitly set auth storage options to bypass aggressive browser Tracking Prevention
+      // We pass window.localStorage to ensure the browser recognizes it as
+      // first-party storage belonging to your domain.
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+            storage: window.localStorage, // Use the origin's LocalStorage explicitly
+            autoRefreshToken: true,
+            persistSession: true,
+        }
+      });
+      // End of FIX
+      
       // Auth changes
       supabaseClient.auth.onAuthStateChange(async (event, session) => {
         const user = session?.user ?? null;
