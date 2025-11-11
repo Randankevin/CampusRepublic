@@ -383,13 +383,34 @@
         if (error) showToast('Failed to send magic link: ' + error.message, 'error');
         else showToast('Magic link sent — check your email');
       });
+// ... inside setupAuthButtons()
+document.getElementById('google-login')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (!supabaseClient) return showToast('Backend not configured', 'error');
 
-      document.getElementById('google-login')?.addEventListener('click', async (e) => {
-        e.preventDefault();
-        if (!supabaseClient) return showToast('Backend not configured', 'error');
-        const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: getRedirectBaseUrl() } });
-        if (error) showToast('Google sign-in failed: ' + error.message, 'error');
-      });
+    const email = (document.getElementById('auth-email')?.value || '').trim();
+    if (email) {
+        showToast('Google OAuth does not use an email input.', 'error');
+        return;
+    }
+
+    const { error, data } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: getRedirectBaseUrl(),
+            // 🚨 ADD THIS LINE: forces Supabase to use the URL hash for session data
+            skipBrowserRedirect: true,
+        }
+    });
+
+    if (error) {
+        showToast('Google login failed: ' + error.message, 'error');
+    } else if (data.url) {
+        // 🚨 ADD THIS BLOCK: manually redirects the user to the provider URL
+        window.location.href = data.url;
+    }
+});
+     
 
       document.getElementById('demo-login')?.addEventListener('click', (e) => {
         e.preventDefault();
