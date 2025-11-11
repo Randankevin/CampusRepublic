@@ -289,9 +289,19 @@
   </div>
   <script>
     // Consolidated app script - cleaned to remove duplicate/nested scripts and syntax errors
-    const SUPABASE_URL = window.SUPABASE_URL || 'https://mqrpkspfyklixnhmvkio.supabase.co';
-    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xcnBrc3BmeWtsaXhuaG12a2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxNjIsImV4cCI6MjA3NzkyNDE2Mn0.lU1Q-t7EHtyUAGJIBXZObZqUj3JzLasCvyLCPPjDeq0';
-
+   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+            // Explicitly set storage to localStorage, which may be less restricted
+            // than the default. The browser is incorrectly flagging the default
+            // storage as third-party, so we specify the less-restricted first-party storage.
+            storage: window.localStorage,
+            
+            // Forces the client to look at the URL for session info immediately
+            // This is crucial for fixing the issue after a redirect.
+            autoRefreshToken: true,
+            persistSession: true,
+        }
+    });
     let supabaseClient = null;
     let currentUser = null;
     let posts = [];
