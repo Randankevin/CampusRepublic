@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
  <head>
@@ -423,6 +424,33 @@
       }
     }
 
+    async function createPost(post) {
+      if (supabaseClient) {
+        try {
+          const row = { id: post.id, data: post, created_at: new Date().toISOString() };
+          // Only attach user_id if it is a valid Supabase auth UUID
+          const uid = currentUser?.id || post.userId;
+          if (!post.anonymous && isUUID(uid)) row.user_id = uid;
+          const { error, data } = await supabaseClient.from('posts').insert(row);
+          if (error) {
+            console.error('createPost error:', error);
+            showToast('Failed to create post: ' + error.message, 'error');
+            // Check if error is auth/session related
+            if (error.message && error.message.toLowerCase().includes('jwt')) {
+              showToast('Session expired. Please sign in again.', 'error');
+              onUserSignedOut();
+            }
+          }
+          return { isOk: !error, error: error?.message };
+        } catch (err) {
+          console.error('createPost error (exception):', err);
+          showToast('Failed to create post: ' + err.message, 'error');
+          return { isOk: false, error: err.message };
+        }
+      }
+      return { isOk: false, error: 'no backend' };
+    }
+
     async function loadPosts() {
       if (!supabaseClient) return;
       try {
@@ -433,12 +461,22 @@
           .select('id, data, created_at')
           .order('created_at', { ascending: false })
           .limit(1000);
-        if (error) { console.error('load posts error', error); return; }
+        if (error) {
+          console.error('load posts error', error);
+          showToast('Failed to load posts: ' + error.message, 'error');
+          // If error is auth/session related
+          if (error.message && error.message.toLowerCase().includes('jwt')) {
+            showToast('Session expired. Please sign in again.', 'error');
+            onUserSignedOut();
+          }
+          return;
+        }
         posts = (data || []).map(r => ({ ...(r.data || {}), id: r.id, created_at: r.created_at }));
         renderPosts();
         updateCategoryCounts();
       } catch (err) {
         console.error('loadPosts error', err);
+        showToast('Failed to load posts: ' + err.message, 'error');
       } finally {
         isLoading = false;
         updateLoadingState();
@@ -458,21 +496,38 @@
       }
     }
 
-    async function createPost(post) {
-      if (supabaseClient) {
+    async function setupCreateCommunity() {
+      const btn = document.getElementById('create-community-btn');
+      if (!btn) return;
+      btn.addEventListener('click', async () => {
+        if (!currentUser) { showToast('Please sign in to create a community', 'error'); return; }
+        const name = prompt('Community name (letters, numbers, dashes):');
+        if (!name) return;
+        const clean = name.trim();
+        if (!/^[a-zA-Z0-9\- _]{3,30}$/.test(clean)) { showToast('Invalid name', 'error'); return; }
         try {
-          const row = { id: post.id, data: post, created_at: new Date().toISOString() };
-          // Only attach user_id if it is a valid Supabase auth UUID
-          const uid = currentUser?.id || post.userId;
-          if (!post.anonymous && isUUID(uid)) row.user_id = uid;
-          const { error } = await supabaseClient.from('posts').insert(row);
-          return { isOk: !error, error: error?.message };
+          if (!supabaseClient) return;
+          const payload = { name: clean };
+          if (isUUID(currentUser.id)) payload.created_by = currentUser.id;
+          const { error, data } = await supabaseClient.from('communities').insert(payload);
+          if (error) {
+            console.error('createCommunity error:', error);
+            showToast('Failed to create community: ' + error.message, 'error');
+            if (error.message && error.message.toLowerCase().includes('jwt')) {
+              showToast('Session expired. Please sign in again.', 'error');
+              onUserSignedOut();
+            }
+            return;
+          }
+          if (!communities.includes(clean)) communities.push(clean);
+          renderCommunities();
+          ensureCommunityAdmins(clean, currentUser.id);
+          showToast('Community created');
         } catch (err) {
-          console.error('createPost error', err);
-          return { isOk: false, error: err.message };
+          console.error('createCommunity failed', err);
+          showToast('Failed to create community: ' + err.message, 'error');
         }
-      }
-      return { isOk: false, error: 'no backend' };
+      });
     }
 
     function setupCreatePostForm() {
@@ -644,32 +699,6 @@
       } catch (e) {
         console.warn('ensureCommunityAdmins skipped/failed', e?.message || e);
       }
-    }
-
-    function setupCreateCommunity() {
-      const btn = document.getElementById('create-community-btn');
-      if (!btn) return;
-      btn.addEventListener('click', async () => {
-        if (!currentUser) { showToast('Please sign in to create a community', 'error'); return; }
-        const name = prompt('Community name (letters, numbers, dashes):');
-        if (!name) return;
-        const clean = name.trim();
-        if (!/^[a-zA-Z0-9\- _]{3,30}$/.test(clean)) { showToast('Invalid name', 'error'); return; }
-        try {
-          if (!supabaseClient) return;
-          const payload = { name: clean };
-          if (isUUID(currentUser.id)) payload.created_by = currentUser.id;
-          const { error } = await supabaseClient.from('communities').insert(payload);
-          if (error) { console.error('createCommunity error', error); showToast('Failed to create community', 'error'); return; }
-          if (!communities.includes(clean)) communities.push(clean);
-          renderCommunities();
-          ensureCommunityAdmins(clean, currentUser.id);
-          showToast('Community created');
-        } catch (err) {
-          console.error('createCommunity failed', err);
-          showToast('Failed to create community', 'error');
-        }
-      });
     }
 
     // UI handlers for opening/closing modals and category filters
