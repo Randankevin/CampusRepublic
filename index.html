@@ -6,7 +6,7 @@
   <title>CampusRepublic - University Student Community</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="dist/styles.css" />
- <link rel="stylesheet" href="dist/js/supabase.js" />
+  <script src="src/supabase.min.js"></script>
   <script>
     // Site owner Supabase Auth user ID (granted admin on all newly created communities)
     window.SITE_OWNER_ID = 'a9082745-e70d-46ea-8992-7231a729290f';
@@ -819,7 +819,7 @@
                 </button>
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-200">${(post.upvotes||0) - (post.downvotes||0)}</span>
                 <button class="vote-button p-2 rounded-full" onclick="vote('${post.id}','down')">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 15v4a3 3 0 006 0v-4m4-6v2a2 2 0 01-2 2H6a2 2 0 012-2V9a2 2 0 012-2h12a2 2 0 012 2z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 15v4a3 3 0 006 0v-4m4-6v2a2 2 0 01-2 2H6a2 2 0 012-2V9a2 2 0 012-2h12a2 2 012 2z" /></svg>
                 </button>
               </div>
               <div class="flex-1 min-w-0">
