@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusRepublic • Student Network</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Styles - Bundled */
+        :root {
+            --primary-blue: #3a86ff;
+            --primary-purple: #8338ec;
+            --primary-pink: #ff006e;
+            --accent-teal: #00bbf9;
+            --accent-green: #38b000;
+            --accent-amber: #ff9e00;
+            
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #141420;
+            --bg-tertiary: #1e1e2e;
+            --bg-card: rgba(20, 20, 32, 0.95);
+            --bg-card-hover: rgba(30, 30, 46, 0.95);
+            
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --text-muted: #6c757d;
+            
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 20px rgba(58, 134, 255, 0.2);
+            
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            --gradient-accent: linear-gradient(135deg, var(--primary-pink), var(--accent-amber));
+            
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 2rem;
+            
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-sans);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(58, 134, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(131, 56, 236, 0.05) 0%, transparent 20%);
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-purple);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: var(--space-sm) 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-lg);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            text-decoration: none;
+            transition: var(--transition-base);
+        }
+
+        .logo:hover {
+            opacity: 0.9;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: var(--font-size-lg);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            100% { transform: translateX(100%); }
+        }
+
+        .logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-tagline {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-xl);
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            padding: var(--space-sm) 0;
+            position: relative;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform var(--transition-base);
+            border-radius: var(--radius-full);
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            transform: scaleX(1);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+
+        .btn-outline:hover {
+            background: rgba(58, 134, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: var(--space-2xl);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: calc(64px + var(--space-xl));
+            height: calc(100vh - 64px - var(--space-xl) * 2);
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            transition: var(--transition-base);
+        }
+
+        .sidebar-section:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .sidebar-title {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .sidebar-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+        }
+
+        .welcome-message {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            line-height: 1.5;
+            margin-bottom: var(--space-lg);
+        }
+
+        /* Channel Filters */
+        .channel-filters {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .channel-filter {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .channel-filter:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .channel-filter.active {
+            background: rgba(58, 134, 255, 0.1);
+            color: var(--primary-blue);
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .channel-icon {
+            font-size: var(--font-size-lg);
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Community List */
+        .community-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .community-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-align: left;
+        }
+
+        .community-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .community-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .community-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .community-name {
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .community-stats {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+
+        .stat-hot {
+            color: var(--primary-pink);
+        }
+
+        .stat-active {
+            color: var(--accent-green);
+        }
+
+        .stat-new {
+            color: var(--accent-teal);
+        }
+
+        /* Content Area */
+        .content-area {
+            min-width: 0;
+        }
+
+        .feed-header {
+            margin-bottom: var(--space-xl);
+        }
+
+        .feed-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .feed-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        /* Feed Controls */
+        .feed-controls {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .sort-select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .sort-select:hover {
+            border-color: var(--primary-blue);
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
+        }
+
+        /* Quick Post */
+        .quick-post {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 2px dashed var(--border-color);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            transition: var(--transition-base);
+        }
+
+        .quick-post:hover {
+            border-color: var(--primary-blue);
+            background: var(--bg-card-hover);
+        }
+
+        .quick-post-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .quick-post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .quick-post-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            padding: var(--space-sm) 0;
+        }
+
+        .quick-post-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .quick-post-input:focus {
+            outline: none;
+        }
+
+        /* Posts Grid */
+        .posts-grid {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        /* Post Cards */
+        .post-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: var(--space-xl);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Post Header */
+        .post-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .post-votes {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xs);
+            flex-shrink: 0;
+        }
+
+        .vote-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-md);
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vote-btn:hover {
+            background: rgba(58, 134, 255, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .vote-btn.down:hover {
+            color: var(--primary-pink);
+            background: rgba(255, 0, 110, 0.1);
+        }
+
+        .vote-btn.active {
+            color: var(--primary-blue);
+            background: rgba(58, 134, 255, 0.15);
+        }
+
+        .vote-btn.down.active {
+            color: var(--primary-pink);
+            background: rgba(255, 0, 110, 0.15);
+        }
+
+        .vote-count {
+            font-weight: 700;
+            font-size: var(--font-size-base);
+            color: var(--text-primary);
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .post-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-md);
+        }
+
+        .post-category {
+            background: rgba(131, 56, 236, 0.1);
+            color: var(--primary-purple);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .post-university {
+            color: var(--text-muted);
+            font-size: var(--font-size-xs);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .post-time {
+            color: var(--text-muted);
+            font-size: var(--font-size-xs);
+        }
+
+        .post-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+            line-height: 1.4;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .post-title:hover {
+            color: var(--primary-blue);
+        }
+
+        .post-excerpt {
+            color: var(--text-secondary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+        }
+
+        /* Post Footer */
+        .post-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            color: white;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            color: var(--text-primary);
+        }
+
+        .author-karma {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+
+        .post-stats {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xl);
+        }
+
+        .stat-action {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            text-decoration: none;
+            transition: var(--transition-fast);
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .stat-action:hover {
+            color: var(--primary-blue);
+        }
+
+        .stat-icon {
+            font-size: var(--font-size-base);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-2xl) var(--space-lg);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(58, 134, 255, 0.1);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--space-lg);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-2xl) var(--space-lg);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: var(--space-lg);
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            color: var(--text-primary);
+        }
+
+        .empty-description {
+            color: var(--text-secondary);
+            max-width: 400px;
+            margin: 0 auto var(--space-xl);
+            line-height: 1.6;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: var(--space-lg);
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            padding: var(--space-xl);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+        }
+
+        .modal-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            color: var(--text-primary);
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-xl);
+            right: var(--space-xl);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-md);
+            transition: var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: var(--space-xl);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            transition: var(--transition-base);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-track {
+            width: 52px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            position: relative;
+            transition: var(--transition-base);
+        }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: var(--text-secondary);
+            border-radius: var(--radius-full);
+            transition: var(--transition-base);
+        }
+
+        .toggle-switch input:checked + .toggle-track {
+            background: rgba(58, 134, 255, 0.2);
+            border-color: var(--primary-blue);
+        }
+
+        .toggle-switch input:checked + .toggle-track::after {
+            background: var(--primary-blue);
+            transform: translateX(24px);
+        }
+
+        .toggle-label {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            padding: var(--space-xl);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+        }
+
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-tertiary);
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .checkbox-input:checked {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .checkbox-label {
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+
+        /* Text utilities */
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-muted); }
+        .text-primary { color: var(--primary-blue); }
+        .text-xs { font-size: var(--font-size-xs); }
+        .text-sm { font-size: var(--font-size-sm); }
+        .text-xl { font-size: var(--font-size-xl); }
+        .block { display: block; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mb-2 { margin-bottom: var(--space-sm); }
+        .mb-4 { margin-bottom: var(--space-lg); }
+        .mb-6 { margin-bottom: var(--space-2xl); }
+        .mt-1 { margin-top: var(--space-xs); }
+        .mt-2 { margin-top: var(--space-sm); }
+        .mt-4 { margin-top: var(--space-lg); }
+        .mt-6 { margin-top: var(--space-2xl); }
+        .pt-6 { padding-top: var(--space-2xl); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--space-md) var(--space-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform var(--transition-base);
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--primary-pink);
+        }
+
+        .toast-info {
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .toast-message {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: var(--space-xl) 0;
+            margin-top: var(--space-2xl);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-xs);
+        }
+
+        .footer-tagline {
+            color: var(--text-secondary);
+            font-size: var(--font-size-xs);
+        }
+
+        /* Flex utilities */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-4 { gap: var(--space-lg); }
+        .space-y-3 > * + * { margin-top: var(--space-md); }
+
+        /* Border utilities */
+        .border-t { border-top: 1px solid var(--border-color); }
+        .border-gray-800 { border-color: var(--border-color); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: var(--space-xl);
+            }
+            
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                padding: var(--space-md);
+            }
+            
+            .nav-links {
+                gap: var(--space-md);
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .main-layout {
+                padding: var(--space-lg);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .post-footer {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: flex-start;
+            }
+            
+            .post-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .modal {
+                padding: var(--space-sm);
+            }
+            
+            .modal-content {
+                max-height: 80vh;
+            }
+            
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: var(--space-lg);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .feed-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Utility classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .visible {
+            display: block !important;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <div class="logo-icon">CR</div>
+                <div>
+                    <div class="logo-text">CampusRepublic</div>
+                    <div class="logo-tagline">Connect. Share. Grow.</div>
+                </div>
+            </a>
+
+            <!-- Navigation -->
+            <nav class="nav-links">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Communities</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Publications</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </a>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="btn btn-primary" id="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Join Now</span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Welcome Section -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Welcome</h3>
+                <p class="welcome-message" id="welcome-message">Share your campus experience, connect with peers, and join the conversation.</p>
+                <button class="btn btn-primary w-100" id="create-post-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Create Post</span>
+                </button>
+            </div>
+
+            <!-- Channels -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Channels</h3>
+                <div class="channel-filters">
+                    <button class="channel-filter active" data-category="all">
+                        <span class="channel-icon">🏠</span>
+                        <span>All Posts</span>
+                    </button>
+                    <button class="channel-filter" data-category="academic">
+                        <span class="channel-icon">📚</span>
+                        <span>Academic</span>
+                    </button>
+                    <button class="channel-filter" data-category="social">
+                        <span class="channel-icon">👥</span>
+                        <span>Social Life</span>
+                    </button>
+                    <button class="channel-filter" data-category="memes">
+                        <span class="channel-icon">😂</span>
+                        <span>Memes & Fun</span>
+                    </button>
+                    <button class="channel-filter" data-category="campus">
+                        <span class="channel-icon">🏛️</span>
+                        <span>Campus News</span>
+                    </button>
+                    <button class="channel-filter" data-category="vent">
+                        <span class="channel-icon">🗣️</span>
+                        <span>Vent Zone</span>
+                    </button>
+                    <button class="channel-filter" data-category="questions">
+                        <span class="channel-icon">❓</span>
+                        <span>Questions</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Campus Hubs -->
+            <div class="sidebar-section">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="sidebar-title">Campus Hubs</h3>
+                    <button class="btn btn-outline btn-sm" id="create-community-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Create</span>
+                    </button>
+                </div>
+                <div class="community-list" id="communities-list">
+                    <!-- Communities will be loaded here -->
+                    <div class="text-muted text-center" style="padding: 2rem 0;">Loading communities...</div>
+                </div>
+            </div>
+
+            <!-- Campus Stats -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Campus Stats</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Active Students</span>
+                        <span class="stat-value stat-active" id="active-count">1.2k</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Posts Today</span>
+                        <span class="stat-value stat-new" id="posts-today">42</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Hot Threads</span>
+                        <span class="stat-value stat-hot" id="hot-threads">8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Communities</span>
+                        <span class="stat-value" id="communities-count">24</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Feed Header -->
+            <div class="feed-header">
+                <h1 class="feed-title">Campus Feed</h1>
+                <p class="feed-subtitle">Latest conversations from your campus community</p>
+                
+                <!-- Feed Controls -->
+                <div class="feed-controls">
+                    <select class="sort-select" id="sort-select">
+                        <option value="new">🆕 Newest First</option>
+                        <option value="hot">🔥 Hot & Trending</option>
+                        <option value="top">⭐ Most Upvoted</option>
+                        <option value="controversial">💥 Controversial</option>
+                    </select>
+                    <button class="btn btn-secondary" id="refresh-feed">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+
+                <!-- Quick Post -->
+                <div class="quick-post" id="quick-post">
+                    <div class="quick-post-content">
+                        <div class="quick-post-avatar" id="user-avatar">AN</div>
+                        <input type="text" 
+                               class="quick-post-input" 
+                               placeholder="What's happening on campus? Share your thoughts..."
+                               id="quick-post-input">
+                        <button class="btn btn-primary" id="quick-post-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Post</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posts Container -->
+            <div class="posts-grid" id="posts-container">
+                <!-- Posts will be loaded here -->
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading campus conversations...</p>
+                </div>
+            </div>
+
+            <!-- Empty State (Hidden by default) -->
+            <div class="empty-state hidden" id="empty-state">
+                <div class="empty-icon">📚</div>
+                <h3 class="empty-title">Quiet on Campus</h3>
+                <p class="empty-description">Be the first to start a conversation! Share your campus experience and connect with fellow students.</p>
+                <button class="btn btn-primary" id="create-first-post">
+                    <i class="fas fa-plus"></i>
+                    <span>Start the Conversation</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Post Modal -->
+    <div class="modal hidden" id="create-post-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Post</h2>
+                <p class="modal-subtitle">Share your thoughts with the campus community</p>
+                <button class="modal-close" id="close-post-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="create-post-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="post-title">Title</label>
+                        <input type="text" 
+                               class="form-input" 
+                               id="post-title" 
+                               placeholder="What's your post about?"
+                               required
+                               maxlength="300">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="post-category">Channel</label>
+                            <select class="form-select" id="post-category" required>
+                                <option value="">Select a channel</option>
+                                <option value="academic">📚 Academic</option>
+                                <option value="social">👥 Social Life</option>
+                                <option value="memes">😂 Memes & Fun</option>
+                                <option value="campus">🏛️ Campus News</option>
+                                <option value="vent">🗣️ Vent Zone</option>
+                                <option value="questions">❓ Questions</option>
+                                <option value="blog">✍️ Blog</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="post-university">Campus</label>
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="post-university" 
+                                   placeholder="Your university"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="post-content">Content</label>
+                        <textarea class="form-textarea" 
+                                  id="post-content" 
+                                  placeholder="Share your thoughts..."
+                                  required
+                                  rows="6"></textarea>
+                        <div class="flex justify-between items-center mt-2">
+                            <small class="text-muted">Share respectfully and stay on topic</small>
+                            <small class="text-muted" id="char-count">0/5000</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="post-author">Display Name</label>
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="post-author" 
+                                   placeholder="How should we call you?"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="post-anonymous">
+                                <span class="toggle-track"></span>
+                                <span class="toggle-label">Post Anonymously</span>
+                            </label>
+                            <small class="text-muted block mt-1">Your identity will be hidden</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-post">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submit-post">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Publish Post</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Community Modal -->
+    <div class="modal hidden" id="create-community-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Campus Hub</h2>
+                <p class="modal-subtitle">Build a community for your campus peers</p>
+                <button class="modal-close" id="close-community-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="create-community-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="community-name">Hub Name</label>
+                        <input type="text" 
+                               class="form-input" 
+                               id="community-name" 
+                               placeholder="e.g., MIT Students, Harvard Campus Life"
+                               required>
+                        <small class="text-muted">Choose a unique name that represents your community</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="community-description">Description</label>
+                        <textarea class="form-textarea" 
+                                  id="community-description" 
+                                  placeholder="What's this community about? What can members expect?"
+                                  rows="4"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="community-university">Campus</label>
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="community-university" 
+                                   placeholder="University name"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="community-category">Category</label>
+                            <select class="form-select" id="community-category" required>
+                                <option value="general">General</option>
+                                <option value="academic">Academic</option>
+                                <option value="social">Social</option>
+                                <option value="sports">Sports</option>
+                                <option value="events">Events</option>
+                                <option value="housing">Housing</option>
+                                <option value="career">Career</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="campus-restricted">
+                            <span class="checkbox-label">Make this a campus-restricted hub</span>
+                        </label>
+                        <small class="text-muted block mt-1">
+                            Only students from <span id="restricted-campus-name" class="text-primary">your campus</span> 
+                            will be able to join. This helps maintain a focused community.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-community">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submit-community">
+                        <i class="fas fa-users"></i>
+                        <span>Create Community</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal hidden" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Join CampusRepublic</h2>
+                <p class="modal-subtitle">Connect with students from campuses worldwide</p>
+                <button class="modal-close" id="close-login-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-6">
+                    <div class="logo-icon mx-auto mb-4" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-graduation-cap" style="font-size: 24px;"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Welcome to the Republic</h3>
+                    <p class="text-muted">Where campus voices are heard</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="login-email">University Email</label>
+                    <input type="email" 
+                           class="form-input" 
+                           id="login-email" 
+                           placeholder="you@university.edu">
+                    <small class="text-muted">We'll use this to verify your student status</small>
+                </div>
+
+                <div class="space-y-3">
+                    <button class="btn btn-primary w-100" id="email-login-btn">
+                        <i class="fas fa-envelope"></i>
+                        <span>Continue with Email</span>
+                    </button>
+                    
+                    <button class="btn btn-secondary w-100" id="demo-login-btn">
+                        <i class="fas fa-rocket"></i>
+                        <span>Try Demo Mode</span>
+                    </button>
+                </div>
+
+                <div class="text-center mt-6 pt-6 border-t border-gray-800">
+                    <p class="text-sm text-muted">
+                        By joining, you agree to our <a href="#" class="text-primary">Community Guidelines</a> 
+                        and <a href="#" class="text-primary">Privacy Policy</a>
+                    </p>
+                    <p class="text-xs text-muted mt-2">
+                        Real names optional • Campus verification available • Safe space guaranteed
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">© 2024 CampusRepublic. All rights reserved.</p>
+            <p class="footer-tagline">Building better campus communities, one conversation at a time.</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <a href="#" class="text-muted hover:text-primary transition-colors">About</a>
+                <a href="#" class="text-muted hover:text-primary transition-colors">Privacy</a>
+                <a href="#" class="text-muted hover:text-primary transition-colors">Terms</a>
+                <a href="#" class="text-muted hover:text-primary transition-colors">Contact</a>
+                <a href="#" class="text-muted hover:text-primary transition-colors">Careers</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script>
+        // Main Application Logic
+        const CONFIG = {
+            POSTS_PER_PAGE: 15,
+            DEMO_MODE: true,
+        };
+
+        // Global state
+        let currentUser = null;
+        let currentProfile = null;
+        let appState = {
+            posts: [],
+            communities: [],
+            currentCategory: 'all',
+            currentSort: 'new',
+            isLoading: false,
+            userVotes: new Map(),
+        };
+
+        // Demo data
+        const DEMO_POSTS = [
+            {
+                id: 'post-1',
+                title: 'Welcome to CampusRepublic!',
+                content: 'This is a demo platform for campus students. Share your experiences, ask questions, and connect with peers from campuses around the world. Whether you\'re looking for study buddies, campus news, or just want to share memes, this is your space.',
+                author: {
+                    id: 'user-1',
+                    display_name: 'CampusAdmin',
+                    username: 'admin',
+                    karma: 1250
+                },
+                category: 'general',
+                university: 'Demo University',
+                upvote_count: 47,
+                downvote_count: 2,
+                comment_count: 12,
+                view_count: 245,
+                created_at: new Date(Date.now() - 86400000).toISOString(),
+                is_anonymous: false,
+                hot_score: 145.3
+            },
+            {
+                id: 'post-2',
+                title: 'Study Groups for CS 101?',
+                content: 'Anyone interested in forming a study group for the upcoming CS 101 midterm? I\'m struggling with some concepts and would love to collaborate with others. We could meet at the library or virtually.',
+                author: {
+                    id: 'user-2',
+                    display_name: 'CodeNewbie',
+                    username: 'codenewbie',
+                    karma: 320
+                },
+                category: 'academic',
+                university: 'Tech University',
+                upvote_count: 28,
+                downvote_count: 1,
+                comment_count: 8,
+                view_count: 156,
+                created_at: new Date(Date.now() - 43200000).toISOString(),
+                is_anonymous: false,
+                hot_score: 98.7
+            },
+            {
+                id: 'post-3',
+                title: 'Campus Event: Spring Festival This Weekend!',
+                content: 'Don\'t forget about the Spring Festival happening this Saturday at the quad! Free food, games, live music, and student performances. Starts at 2 PM and goes until 10 PM. See you there!',
+                author: {
+                    id: 'user-3',
+                    display_name: 'EventTeam',
+                    username: 'events',
+                    karma: 890
+                },
+                category: 'campus',
+                university: 'State University',
+                upvote_count: 65,
+                downvote_count: 0,
+                comment_count: 15,
+                view_count: 312,
+                created_at: new Date(Date.now() - 21600000).toISOString(),
+                is_anonymous: false,
+                hot_score: 201.5
+            },
+            {
+                id: 'post-4',
+                title: 'This meme sums up my midterm week perfectly',
+                content: 'Found this gem online and had to share. When you study for 5 hours but the test covers the one page you skipped...',
+                author: {
+                    id: 'user-4',
+                    display_name: 'MemeQueen',
+                    username: 'memequeeen',
+                    karma: 1250
+                },
+                category: 'memes',
+                university: 'Arts College',
+                upvote_count: 142,
+                downvote_count: 3,
+                comment_count: 24,
+                view_count: 589,
+                created_at: new Date(Date.now() - 7200000).toISOString(),
+                is_anonymous: false,
+                hot_score: 345.8
+            }
+        ];
+
+        const DEMO_COMMUNITIES = [
+            {
+                id: 'comm-1',
+                name: 'Demo University Hub',
+                slug: 'demo-university',
+                description: 'Official community for Demo University students',
+                university: 'Demo University',
+                category: 'general',
+                is_campus_restricted: true,
+                member_count: 156,
+                post_count: 42
+            },
+            {
+                id: 'comm-2',
+                name: 'Computer Science Students',
+                slug: 'cs-students',
+                description: 'For CS majors and enthusiasts',
+                university: null,
+                category: 'academic',
+                is_campus_restricted: false,
+                member_count: 892,
+                post_count: 312
+            },
+            {
+                id: 'comm-3',
+                name: 'Campus Memes & Fun',
+                slug: 'campus-memes',
+                description: 'Share and enjoy campus humor',
+                university: null,
+                category: 'social',
+                is_campus_restricted: false,
+                member_count: 2450,
+                post_count: 1250
+            },
+            {
+                id: 'comm-4',
+                name: 'Study Tips & Resources',
+                slug: 'study-tips',
+                description: 'Share study techniques and resources',
+                university: null,
+                category: 'academic',
+                is_campus_restricted: false,
+                member_count: 780,
+                post_count: 189
+            }
+        ];
+
+        // Utility functions
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-message">${message}</div>
+            `;
+            
+            const container = document.getElementById('toast-container') || document.body;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffSec = Math.floor(diffMs / 1000);
+            const diffMin = Math.floor(diffSec / 60);
+            const diffHour = Math.floor(diffMin / 60);
+            const diffDay = Math.floor(diffHour / 24);
+            
+            if (diffSec < 60) return 'just now';
+            if (diffMin < 60) return `${diffMin}m ago`;
+            if (diffHour < 24) return `${diffHour}h ago`;
+            if (diffDay < 7) return `${diffDay}d ago`;
+            
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function getInitials(name) {
+            if (!name) return 'AN';
+            return name
+                .split(' ')
+                .map(part => part[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing CampusRepublic...');
+            setupDemoMode();
+            setupEventListeners();
+        });
+
+        function setupDemoMode() {
+            console.log('🔧 Setting up demo mode...');
+            
+            // Create demo user
+            currentUser = {
+                id: 'demo-user-' + Date.now(),
+                email: 'demo@campus.local'
+            };
+            
+            currentProfile = {
+                id: currentUser.id,
+                username: 'demo_student',
+                display_name: 'Demo Student',
+                university: 'Demo University',
+                karma: 150
+            };
+            
+            // Initialize demo data
+            appState.posts = DEMO_POSTS;
+            appState.communities = DEMO_COMMUNITIES;
+            
+            // Update UI
+            updateAuthUI();
+            renderPosts();
+            renderCommunities();
+            updateStats();
+            
+            showToast('Welcome to CampusRepublic Demo Mode!', 'info');
+        }
+
+        function setupEventListeners() {
+            // Theme toggle
+            document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+            
+            // Login button
+            document.getElementById('login-btn')?.addEventListener('click', () => {
+                document.getElementById('login-modal')?.classList.remove('hidden');
+            });
+            
+            // Close modals
+            document.getElementById('close-post-modal')?.addEventListener('click', () => {
+                document.getElementById('create-post-modal').classList.add('hidden');
+            });
+            
+            document.getElementById('close-community-modal')?.addEventListener('click', () => {
+                document.getElementById('create-community-modal').classList.add('hidden');
+            });
+            
+            document.getElementById('close-login-modal')?.addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('hidden');
+            });
+            
+            // Cancel buttons
+            document.getElementById('cancel-post')?.addEventListener('click', () => {
+                document.getElementById('create-post-modal').classList.add('hidden');
+                document.getElementById('create-post-form')?.reset();
+            });
+            
+            document.getElementById('cancel-community')?.addEventListener('click', () => {
+                document.getElementById('create-community-modal').classList.add('hidden');
+                document.getElementById('create-community-form')?.reset();
+            });
+            
+            // Create post button
+            document.getElementById('create-post-btn')?.addEventListener('click', () => {
+                if (!currentUser) {
+                    showToast('Please sign in to create a post', 'error');
+                    document.getElementById('login-modal').classList.remove('hidden');
+                    return;
+                }
+                document.getElementById('create-post-modal').classList.remove('hidden');
+            });
+            
+            // Create community button
+            document.getElementById('create-community-btn')?.addEventListener('click', () => {
+                if (!currentUser) {
+                    showToast('Please sign in to create a community', 'error');
+                    document.getElementById('login-modal').classList.remove('hidden');
+                    return;
+                }
+                document.getElementById('create-community-modal').classList.remove('hidden');
+            });
+            
+            // Quick post
+            document.getElementById('quick-post-btn')?.addEventListener('click', handleQuickPost);
+            document.getElementById('quick-post-input')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleQuickPost();
+                }
+            });
+            
+            // Forms
+            document.getElementById('create-post-form')?.addEventListener('submit', handleCreatePost);
+            document.getElementById('create-community-form')?.addEventListener('submit', handleCreateCommunity);
+            
+            // Login buttons
+            document.getElementById('demo-login-btn')?.addEventListener('click', handleDemoLogin);
+            document.getElementById('email-login-btn')?.addEventListener('click', handleEmailLogin);
+            
+            // Category filters
+            document.querySelectorAll('.channel-filter').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.channel-filter').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    appState.currentCategory = e.currentTarget.dataset.category;
+                    loadData();
+                });
+            });
+            
+            // Sort select
+            document.getElementById('sort-select')?.addEventListener('change', (e) => {
+                appState.currentSort = e.target.value;
+                loadData();
+            });
+            
+            // Refresh button
+            document.getElementById('refresh-feed')?.addEventListener('click', loadData);
+            
+            // Create first post button
+            document.getElementById('create-first-post')?.addEventListener('click', () => {
+                document.getElementById('create-post-modal').classList.remove('hidden');
+            });
+            
+            // Character counter
+            const postContent = document.getElementById('post-content');
+            const charCount = document.getElementById('char-count');
+            if (postContent && charCount) {
+                postContent.addEventListener('input', () => {
+                    const length = postContent.value.length;
+                    charCount.textContent = `${length}/5000`;
+                    if (length > 4500) {
+                        charCount.style.color = '#ff006e';
+                    } else if (length > 3000) {
+                        charCount.style.color = '#ff9e00';
+                    } else {
+                        charCount.style.color = 'var(--text-muted)';
+                    }
+                });
+            }
+            
+            // Update restricted campus name
+            const universityInput = document.getElementById('community-university');
+            const restrictedName = document.getElementById('restricted-campus-name');
+            if (universityInput && restrictedName) {
+                universityInput.addEventListener('input', (e) => {
+                    restrictedName.textContent = e.target.value || 'your campus';
+                });
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.classList.contains('dark');
+            
+            if (isDark) {
+                body.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                showToast('Switched to light mode', 'info');
+            } else {
+                body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('Switched to dark mode', 'info');
+            }
+        }
+
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('login-btn');
+            const welcomeMsg = document.getElementById('welcome-message');
+            const userAvatar = document.getElementById('user-avatar');
+            
+            if (currentProfile) {
+                // Update login button to show profile
+                if (loginBtn) {
+                    loginBtn.innerHTML = `
+                        <i class="fas fa-user"></i>
+                        <span>${currentProfile.display_name || currentProfile.username}</span>
+                    `;
+                    loginBtn.onclick = () => {
+                        showToast('Profile page coming soon!', 'info');
+                    };
+                }
+                
+                // Update welcome message
+                if (welcomeMsg) {
+                    welcomeMsg.textContent = `Welcome back, ${currentProfile.display_name}! Ready to share your campus experience?`;
+                }
+                
+                // Update avatar
+                if (userAvatar) {
+                    userAvatar.textContent = getInitials(currentProfile.display_name || currentProfile.username);
+                }
+            } else {
+                // Reset to default
+                if (loginBtn) {
+                    loginBtn.innerHTML = `
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Join Now</span>
+                    `;
+                    loginBtn.onclick = () => {
+                        document.getElementById('login-modal')?.classList.remove('hidden');
+                    };
+                }
+                
+                if (userAvatar) {
+                    userAvatar.textContent = 'AN';
+                }
+            }
+        }
+
+        function loadData() {
+            appState.isLoading = true;
+            updateLoadingState(true);
+            
+            try {
+                // Use demo data
+                setTimeout(() => {
+                    appState.posts = filterAndSortPosts(DEMO_POSTS);
+                    appState.communities = DEMO_COMMUNITIES;
+                    
+                    renderPosts();
+                    renderCommunities();
+                    updateStats();
+                    
+                    appState.isLoading = false;
+                    updateLoadingState(false);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Failed to load data', 'error');
+                appState.isLoading = false;
+                updateLoadingState(false);
+            }
+        }
+
+        function filterAndSortPosts(posts) {
+            let filtered = [...posts];
+            
+            // Filter by category
+            if (appState.currentCategory && appState.currentCategory !== 'all') {
+                filtered = filtered.filter(post => post.category === appState.currentCategory);
+            }
+            
+            // Sort
+            switch (appState.currentSort) {
+                case 'hot':
+                    filtered.sort((a, b) => b.hot_score - a.hot_score);
+                    break;
+                case 'top':
+                    filtered.sort((a, b) => (b.upvote_count - b.downvote_count) - (a.upvote_count - a.downvote_count));
+                    break;
+                case 'controversial':
+                    filtered.sort((a, b) => {
+                        const aControversy = Math.min(a.upvote_count, a.downvote_count);
+                        const bControversy = Math.min(b.upvote_count, b.downvote_count);
+                        return bControversy - aControversy;
+                    });
+                    break;
+                case 'new':
+                default:
+                    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    break;
+            }
+            
+            return filtered;
+        }
+
+        function updateLoadingState(isLoading) {
+            const postsContainer = document.getElementById('posts-container');
+            const loadingIndicator = postsContainer?.querySelector('.loading');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (isLoading) {
+                if (loadingIndicator) {
+                    loadingIndicator.classList.remove('hidden');
+                }
+                if (emptyState) {
+                    emptyState.classList.add('hidden');
+                }
+            } else {
+                if (loadingIndicator) {
+                    loadingIndicator.classList.add('hidden');
+                }
+                
+                // Show empty state if no posts
+                if (emptyState && appState.posts.length === 0) {
+                    emptyState.classList.remove('hidden');
+                }
+            }
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            if (!container) return;
+            
+            const loadingIndicator = container.querySelector('.loading');
+            if (loadingIndicator) {
+                loadingIndicator.classList.add('hidden');
+            }
+            
+            if (appState.posts.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const postsHTML = appState.posts.map(post => createPostHTML(post)).join('');
+            container.innerHTML = postsHTML;
+            
+            // Attach event listeners to vote buttons
+            container.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.addEventListener('click', handleVote);
+            });
+        }
+
+        function createPostHTML(post) {
+            const author = post.is_anonymous ? 
+                { display_name: 'Anonymous', username: 'anonymous', karma: 0 } : 
+                post.author;
+            
+            const initials = getInitials(author.display_name);
+            const netVotes = (post.upvote_count || 0) - (post.downvote_count || 0);
+            const voteColor = netVotes > 0 ? '#3a86ff' : netVotes < 0 ? '#ff006e' : 'var(--text-secondary)';
+            const userVote = appState.userVotes.get(post.id);
+            
+            return `
+                <article class="post-card fade-in" data-post-id="${post.id}">
+                    <div class="post-header">
+                        <div class="post-votes">
+                            <button class="vote-btn up ${userVote === 'upvote' ? 'active' : ''}" 
+                                    data-post-id="${post.id}" data-vote-type="upvote">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                            <span class="vote-count" style="color: ${voteColor}">
+                                ${formatNumber(netVotes)}
+                            </span>
+                            <button class="vote-btn down ${userVote === 'downvote' ? 'active' : ''}" 
+                                    data-post-id="${post.id}" data-vote-type="downvote">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="post-content">
+                            <div class="post-meta">
+                                ${post.category ? `
+                                    <span class="post-category">${post.category}</span>
+                                ` : ''}
+                                ${post.university ? `
+                                    <span class="post-university">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        ${escapeHtml(post.university)}
+                                    </span>
+                                ` : ''}
+                                <span class="post-time">${formatDate(post.created_at)}</span>
+                            </div>
+                            
+                            <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                            
+                            <p class="post-excerpt">${escapeHtml(post.content.substring(0, 300))}${post.content.length > 300 ? '...' : ''}</p>
+                            
+                            <div class="post-footer">
+                                <div class="post-author">
+                                    <div class="author-avatar">${initials}</div>
+                                    <div class="author-info">
+                                        <span class="author-name">${escapeHtml(author.display_name)}</span>
+                                        ${author.karma ? `
+                                            <span class="author-karma">${formatNumber(author.karma)} karma</span>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="post-stats">
+                                    <button class="stat-action">
+                                        <i class="fas fa-comment stat-icon"></i>
+                                        <span>${post.comment_count || 0}</span>
+                                    </button>
+                                    <button class="stat-action">
+                                        <i class="fas fa-eye stat-icon"></i>
+                                        <span>${formatNumber(post.view_count || 0)}</span>
+                                    </button>
+                                    <button class="stat-action">
+                                        <i class="fas fa-share stat-icon"></i>
+                                        <span>Share</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderCommunities() {
+            const container = document.getElementById('communities-list');
+            if (!container) return;
+            
+            if (appState.communities.length === 0) {
+                container.innerHTML = '<div class="text-muted text-center" style="padding: 2rem 0;">No communities yet. Be the first to create one!</div>';
+                return;
+            }
+            
+            const communitiesHTML = appState.communities.map(community => `
+                <button class="community-item" data-community-id="${community.id}">
+                    <div class="community-avatar">
+                        ${community.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="community-info">
+                        <div class="community-name">
+                            ${escapeHtml(community.name)}
+                            ${community.is_campus_restricted ? '🔒' : ''}
+                        </div>
+                        <div class="community-stats">
+                            ${formatNumber(community.member_count || 0)} members • ${community.category}
+                        </div>
+                    </div>
+                </button>
+            `).join('');
+            
+            container.innerHTML = communitiesHTML;
+            
+            // Attach click handlers
+            container.querySelectorAll('.community-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const communityId = item.dataset.communityId;
+                    const community = appState.communities.find(c => c.id === communityId);
+                    
+                    if (community) {
+                        showToast(`Viewing ${community.name}`, 'info');
+                    }
+                });
+            });
+        }
+
+        function updateStats() {
+            // Update active count
+            const activeCount = document.getElementById('active-count');
+            if (activeCount) {
+                const active = Math.floor(Math.random() * 500) + 800;
+                activeCount.textContent = formatNumber(active);
+            }
+            
+            // Update posts today
+            const postsToday = document.getElementById('posts-today');
+            if (postsToday) {
+                const today = Math.floor(Math.random() * 20) + 30;
+                postsToday.textContent = formatNumber(today);
+            }
+            
+            // Update hot threads
+            const hotThreads = document.getElementById('hot-threads');
+            if (hotThreads) {
+                const hot = Math.floor(Math.random() * 5) + 5;
+                hotThreads.textContent = formatNumber(hot);
+            }
+            
+            // Update communities count
+            const communitiesCount = document.getElementById('communities-count');
+            if (communitiesCount) {
+                communitiesCount.textContent = formatNumber(appState.communities.length);
+            }
+        }
+
+        function handleVote(e) {
+            if (!currentUser) {
+                showToast('Please sign in to vote', 'error');
+                document.getElementById('login-modal').classList.remove('hidden');
+                return;
+            }
+            
+            const button = e.currentTarget;
+            const postId = button.dataset.postId;
+            const voteType = button.dataset.voteType;
+            
+            if (!postId || !voteType) return;
+            
+            try {
+                // Update UI immediately
+                const postCard = button.closest('.post-card');
+                const voteCount = postCard.querySelector('.vote-count');
+                const upButton = postCard.querySelector('.vote-btn.up');
+                const downButton = postCard.querySelector('.vote-btn.down');
+                
+                const currentVote = appState.userVotes.get(postId);
+                let netVotes = parseInt(voteCount.textContent.replace(/[KM]/, '')) || 0;
+                
+                if (currentVote === voteType) {
+                    // Remove vote
+                    appState.userVotes.delete(postId);
+                    upButton.classList.remove('active');
+                    downButton.classList.remove('active');
+                    netVotes += voteType === 'upvote' ? -1 : 1;
+                } else {
+                    // Change or add vote
+                    if (currentVote) {
+                        // Switching from up to down or vice versa
+                        netVotes += currentVote === 'upvote' ? -1 : 1;
+                    }
+                    
+                    appState.userVotes.set(postId, voteType);
+                    
+                    if (voteType === 'upvote') {
+                        upButton.classList.add('active');
+                        downButton.classList.remove('active');
+                        netVotes += 1;
+                    } else {
+                        downButton.classList.add('active');
+                        upButton.classList.remove('active');
+                        netVotes -= 1;
+                    }
+                }
+                
+                // Update display
+                voteCount.textContent = formatNumber(netVotes);
+                voteCount.style.color = netVotes > 0 ? '#3a86ff' : netVotes < 0 ? '#ff006e' : 'var(--text-secondary)';
+                
+                showToast(`Vote ${voteType === 'upvote' ? 'up' : 'down'} recorded!`, 'success');
+                
+            } catch (error) {
+                console.error('Error handling vote:', error);
+                showToast('Failed to record vote', 'error');
+            }
+        }
+
+        function handleQuickPost() {
+            const input = document.getElementById('quick-post-input');
+            const content = input?.value.trim();
+            
+            if (!content) {
+                showToast('Please enter some content', 'error');
+                return;
+            }
+            
+            if (!currentUser) {
+                showToast('Please sign in to post', 'error');
+                document.getElementById('login-modal').classList.remove('hidden');
+                return;
+            }
+            
+            // Create post object
+            const newPost = {
+                id: 'post-' + Date.now(),
+                title: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
+                content: content,
+                author: currentProfile,
+                category: 'general',
+                university: currentProfile?.university || 'Demo University',
+                upvote_count: 0,
+                downvote_count: 0,
+                comment_count: 0,
+                view_count: 0,
+                created_at: new Date().toISOString(),
+                is_anonymous: false,
+                hot_score: 10
+            };
+            
+            // Add to posts
+            appState.posts.unshift(newPost);
+            
+            // Re-render
+            renderPosts();
+            
+            // Clear input
+            input.value = '';
+            
+            // Show success message
+            showToast('Post published successfully!', 'success');
+            
+            // Update stats
+            updateStats();
+        }
+
+        function handleCreatePost(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showToast('Please sign in to create a post', 'error');
+                document.getElementById('login-modal').classList.remove('hidden');
+                return;
+            }
+            
+            const form = e.target;
+            const title = document.getElementById('post-title').value.trim();
+            const content = document.getElementById('post-content').value.trim();
+            const category = document.getElementById('post-category').value;
+            const university = document.getElementById('post-university').value.trim();
+            const author = document.getElementById('post-author').value.trim();
+            const isAnonymous = document.getElementById('post-anonymous').checked;
+            
+            if (!title || !content || !category || !university) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                // Create post object
+                const newPost = {
+                    id: 'post-' + Date.now(),
+                    title: title,
+                    content: content,
+                    author: {
+                        id: currentUser.id,
+                        display_name: isAnonymous ? 'Anonymous' : (author || currentProfile.display_name),
+                        username: isAnonymous ? 'anonymous' : currentProfile.username,
+                        karma: currentProfile.karma || 0
+                    },
+                    category: category,
+                    university: university,
+                    upvote_count: 0,
+                    downvote_count: 0,
+                    comment_count: 0,
+                    view_count: 0,
+                    created_at: new Date().toISOString(),
+                    is_anonymous: isAnonymous,
+                    hot_score: 10
+                };
+                
+                // Add to posts
+                appState.posts.unshift(newPost);
+                
+                // Re-render
+                renderPosts();
+                
+                // Close modal and reset form
+                document.getElementById('create-post-modal').classList.add('hidden');
+                form.reset();
+                
+                // Show success message
+                showToast('Post published successfully!', 'success');
+                
+                // Update stats
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error creating post:', error);
+                showToast('Failed to create post', 'error');
+            }
+        }
+
+        function handleCreateCommunity(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showToast('Please sign in to create a community', 'error');
+                document.getElementById('login-modal').classList.remove('hidden');
+                return;
+            }
+            
+            const form = e.target;
+            const name = document.getElementById('community-name').value.trim();
+            const description = document.getElementById('community-description').value.trim();
+            const university = document.getElementById('community-university').value.trim();
+            const category = document.getElementById('community-category').value;
+            const isCampusRestricted = document.getElementById('campus-restricted').checked;
+            
+            if (!name || !university || !category) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                // Create community object
+                const newCommunity = {
+                    id: 'comm-' + Date.now(),
+                    name: name,
+                    slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                    description: description,
+                    university: university,
+                    category: category,
+                    is_campus_restricted: isCampusRestricted,
+                    member_count: 1,
+                    post_count: 0
+                };
+                
+                // Add to communities
+                appState.communities.unshift(newCommunity);
+                
+                // Re-render
+                renderCommunities();
+                
+                // Close modal and reset form
+                document.getElementById('create-community-modal').classList.add('hidden');
+                form.reset();
+                
+                // Show success message
+                const message = isCampusRestricted ? 
+                    `Campus-restricted hub "${name}" created!` :
+                    `Community "${name}" created!`;
+                showToast(message, 'success');
+                
+                // Update stats
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error creating community:', error);
+                showToast('Failed to create community', 'error');
+            }
+        }
+
+        function handleDemoLogin() {
+            // Setup demo mode
+            setupDemoMode();
+            
+            // Close modal
+            document.getElementById('login-modal').classList.add('hidden');
+            
+            showToast('Welcome to CampusRepublic Demo Mode!', 'success');
+        }
+
+        function handleEmailLogin() {
+            const email = document.getElementById('login-email')?.value.trim();
+            
+            if (!email) {
+                showToast('Please enter your email', 'error');
+                return;
+            }
+            
+            try {
+                // For demo purposes, we'll simulate login
+                currentUser = {
+                    id: 'user-' + Date.now(),
+                    email: email
+                };
+                
+                currentProfile = {
+                    id: currentUser.id,
+                    username: email.split('@')[0],
+                    display_name: email.split('@')[0],
+                    university: email.split('@')[1]?.replace('.edu', '').replace('.ac.', '') || 'Unknown University',
+                    karma: 100
+                };
+                
+                // Update UI
+                updateAuthUI();
+                
+                // Close modal
+                document.getElementById('login-modal').classList.add('hidden');
+                
+                // Show success
+                showToast(`Welcome to CampusRepublic, ${currentProfile.display_name}!`, 'success');
+                
+                // Load data
+                loadData();
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Login failed. Using demo mode instead.', 'error');
+                handleDemoLogin();
+            }
+        }
+    </script>
+</body>
+</html>
