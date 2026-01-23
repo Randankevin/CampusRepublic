@@ -1,0 +1,124 @@
+<!-- Add this at the beginning of the body -->
+<div id="landing-page" class="landing-page">
+    <div class="landing-content">
+        <div class="logo-icon large">CR</div>
+        <h1>CampusRepublic</h1>
+        <p class="tagline">Where campus students connect, share & grow</p>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-comments"></i>
+                <h3>Real Campus Talk</h3>
+                <p>Authentic conversations from real students</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-user-friends"></i>
+                <h3>Campus Communities</h3>
+                <p>Join hubs specific to your university</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Safe & Verified</h3>
+                <p>Student-only, campus-verified community</p>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary btn-lg" id="enter-app">
+            <i class="fas fa-door-open"></i>
+            Enter CampusRepublic
+        </button>
+        
+        <p class="small-text">Join thousands of students from campuses worldwide</p>
+    </div>
+</div>
+
+<style>
+.landing-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #0a0a0f 0%, #141420 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.landing-content {
+    text-align: center;
+    max-width: 800px;
+    padding: 2rem;
+}
+
+.logo-icon.large {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+    margin: 0 auto 2rem;
+}
+
+.landing-content h1 {
+    font-size: 3.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+
+.tagline {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.feature {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.feature i {
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+.feature h3 {
+    margin-bottom: 0.5rem;
+}
+
+.feature p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.btn-lg {
+    padding: 1rem 3rem;
+    font-size: 1.25rem;
+    margin-top: 2rem;
+}
+
+.small-text {
+    margin-top: 2rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+</style>
+
+<script>
+// Add this to the setupEventListeners function
+document.getElementById('enter-app')?.addEventListener('click', () => {
+    document.getElementById('landing-page').style.display = 'none';
+});
+</script>

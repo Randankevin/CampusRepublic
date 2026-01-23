@@ -1,0 +1,10 @@
+// Application Configuration
+export const CONFIG = {
+  SUPABASE_URL: 'mqrpkspfyklixnhmvkio',
+  SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xcnBrc3BmeWtsaXhuaG12a2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxNjIsImV4cCI6MjA3NzkyNDE2Mn0.lU1Q-t7EHtyUAGJIBXZObZqUj3JzLasCvyLCPPjDeq0',
+  POSTS_PER_PAGE: 20,
+  COMMENTS_PER_PAGE: 50,
+  MAX_CONTENT_LENGTH: 10000,
+  MAX_TITLE_LENGTH: 500,
+};
+
