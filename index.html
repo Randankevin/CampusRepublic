@@ -17,19 +17,19 @@
     <link rel="apple-touch-icon" href="/data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23000' width='180' height='180'/><text x='50%' y='50%' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em' font-family='system-ui'>CR</text></svg>" />
     
     <!-- Manifest -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="./manifest.json" />
     
     <title>Campus Republic</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
     
     <!-- Register Service Worker -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => {
+          navigator.serviceWorker.register('./sw.js').catch(err => {
             console.log('ServiceWorker registration failed: ', err);
           });
         });
